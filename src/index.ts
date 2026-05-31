@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 
 import { categoryRoutes } from './routes/category.routes'
 import { transactionRoutes } from './routes/transaction.routes'
+import { authRoutes } from './routes/auth.routes'
 
 const app = new Hono()
 
@@ -14,6 +15,7 @@ app.get('/', (c) => {
 
 app.route('/categories', categoryRoutes)
 app.route('/transactions', transactionRoutes)
+app.route('/auth', authRoutes)
 
 serve({
   fetch: app.fetch,
