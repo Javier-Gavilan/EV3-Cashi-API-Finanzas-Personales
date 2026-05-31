@@ -7,15 +7,22 @@ API REST hecha y trabajada con:
 - TypeScript
 - Node.js
 - Docker
+- Hono
 - Prisma
 - PostgreSQL
+- Zod
+- JWT
+- bcrypt.js
 
 Características:
 
 - API REST funcional con métodos HTTP
 - Migraciones mediante Prisma y conexión a base de datos con PostgreSQL y Docker
-- CRUD funcional para categorías y transacciones
-- Cálculo de balance funcional
+- Autenticación mediante JWT
+- Registro e inicio de sesión de usuarios
+- Contraseñas almacenadas mediante hash con bcrypt
+- CRUD completo de categorías y trnasacciones, autenticadas y asociadas a usuarios.
+- Subida de comprobantes
 
 Instrucciones:
 
@@ -29,4 +36,4 @@ Instrucciones:
 
 Uso de IA:
 
-> Mediante *ChatGPT* le solicité la creación del contenido de tsconfig.json y docker.compose.yml, además de los scripts de package.json. Por su recomendación también cambié la versión de Prisma de 7 a 6 por incompatibilidades que tenía en los comandos y por temas de estabilidad. También le solicité ayuda con las instrucciones para levantar el programa, principalmente para entender el funcionamiento de Docker y la creación del .env e implementación del .env.example para copiarlo directamente. Por último le solicité ayuda para la estructuración básica del código, con las carpetas y archivos que deben estar dentro de /src.
+> Mediante *ChatGPT* le solicité la creación asistida del JWT, middleware, y la modificación del schema.prisma para agregar la tabla usuario y modificar la de transacciones, así como el solucionar errores generales en el código por no haber ordenado correctamente ciertas líneas o componentes.
