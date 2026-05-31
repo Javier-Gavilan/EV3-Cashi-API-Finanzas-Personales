@@ -2,6 +2,7 @@ import { Context } from 'hono'
 
 import { transactionRepository } from '../repositories/transaction.repository'
 import { categoryRepository } from '../repositories/category.repository'
+import { getAuthUser } from '../lib/auth'
 
 import {
   createTransactionSchema,
@@ -10,8 +11,12 @@ import {
 
 export const transactionController = {
   async getAll(c: Context) {
+    const user = getAuthUser(c)
+
     const transactions =
-      await transactionRepository.findAll()
+      await transactionRepository.findAllByUser(
+        user.id
+      )
 
     return c.json(transactions)
   },
@@ -26,6 +31,17 @@ export const transactionController = {
       return c.json(
         { message: 'Transacción no encontrada' },
         404
+      )
+    }
+
+    const user = getAuthUser(c)
+
+    if (transaction.userId !== user.id) {
+      return c.json(
+        {
+          message: 'Forbidden',
+        },
+        403
       )
     }
 
@@ -50,10 +66,13 @@ export const transactionController = {
       )
     }
 
+    const user = getAuthUser(c)
+
     const transaction =
-      await transactionRepository.create(
-        validatedData
-      )
+      await transactionRepository.create({
+        ...validatedData,
+        userId: user.id,
+      })
 
     return c.json(transaction, 201)
   },
@@ -73,6 +92,17 @@ export const transactionController = {
       return c.json(
         { message: 'Transacción no encontrada' },
         404
+      )
+    }
+
+    const user = getAuthUser(c)
+
+    if (existingTransaction.userId !== user.id) {
+      return c.json(
+        {
+          message: 'Forbidden',
+        },
+        403
       )
     }
 
@@ -112,14 +142,29 @@ export const transactionController = {
       )
     }
 
+    const user = getAuthUser(c)
+
+    if (existingTransaction.userId !== user.id) {
+      return c.json(
+        {
+          message: 'Forbidden',
+        },
+        403
+      )
+    }
+
     await transactionRepository.delete(id)
 
     return c.body(null, 204)
   },
 
   async getBalance(c: Context) {
+    const user = getAuthUser(c)
+
     const transactions =
-      await transactionRepository.findAll()
+      await transactionRepository.findAllByUser(
+        user.id
+      )
 
     const totalIncome = transactions
       .filter(

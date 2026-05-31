@@ -7,12 +7,15 @@ export const createTransactionSchema = z.object({
 
   type: z.enum(['income', 'expense']),
 
-  description: z
-    .string()
-    .max(255)
-    .optional(),
+  description: z.string().max(255).optional(),
 
   date: z.coerce.date(),
+
+  receiptUrl: z.string().optional(),
+
+  latitude: z.number().min(-90).max(90).optional(),
+
+  longitude: z.number().min(-180).max(180).optional(),
 
   categoryId: z.number().int().positive(),
 })

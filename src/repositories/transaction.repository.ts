@@ -28,7 +28,25 @@ export const transactionRepository = {
     })
   },
 
-  create(data: CreateTransactionDTO) {
+  findAllByUser(userId: number) {
+    return prisma.transaction.findMany({
+      where: {
+        userId,
+      },
+
+      include: {
+        category: true,
+      },
+
+      orderBy: {
+        id: 'desc',
+      },
+    })
+  },
+
+  create(data: CreateTransactionDTO & {
+    userId: number
+  }) {
     return prisma.transaction.create({
       data,
     })
