@@ -1,7 +1,10 @@
 import { Hono } from 'hono'
 import { categoryController } from '../controllers/category.controller'
+import { authMiddleware } from '../middlewares/auth.middleware'
 
 export const categoryRoutes = new Hono()
+
+categoryRoutes.use('*', authMiddleware)
 
 categoryRoutes.get(
   '/',

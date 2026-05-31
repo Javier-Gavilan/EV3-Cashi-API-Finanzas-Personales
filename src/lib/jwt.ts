@@ -13,3 +13,9 @@ export function generateToken(userId: number) {
     }
   )
 }
+
+export function verifyToken(token: string) {
+  return jwt.verify(token, JWT_SECRET) as {
+    userId: number
+  }
+}
