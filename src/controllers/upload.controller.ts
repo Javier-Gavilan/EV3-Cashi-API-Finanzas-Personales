@@ -3,7 +3,7 @@ import { Context } from 'hono'
 import fs from 'fs/promises'
 import path from 'path'
 
-import { v4 as uuid } from 'uuid'
+import crypto from 'crypto'
 
 import {
     ALLOWED_MIME_TYPES,
@@ -56,7 +56,7 @@ export const uploadController = {
             file.name.split('.').pop()
 
         const filename =
-            `${uuid()}.${extension}`
+            `${crypto.randomUUID()}.${extension}`
 
         const uploadPath = path.join(
             process.cwd(),

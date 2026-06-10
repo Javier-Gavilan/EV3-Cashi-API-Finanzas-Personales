@@ -29,9 +29,12 @@ app.route('/transactions', transactionRoutes)
 app.route('/transactions/upload', uploadRoutes)
 app.route('/auth', authRoutes)
 
+const port =
+  Number(process.env.PORT) || 3000
+
 serve({
   fetch: app.fetch,
-  port: 3000,
+  port,
 })
 
-console.log('http://localhost:3000')
+console.log(`Servidor corriendo en http://localhost:${port}`)
