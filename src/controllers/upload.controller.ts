@@ -6,107 +6,98 @@ import path from 'path'
 import crypto from 'crypto'
 
 import {
-    ALLOWED_MIME_TYPES,
-    MAX_FILE_SIZE,
+  ALLOWED_MIME_TYPES,
+  MAX_FILE_SIZE,
 } from '../schemas/upload.schema'
 
 export const uploadController = {
-    async uploadReceipt(c: Context) {
-        try {
-            console.log('Upload iniciado')
+  async uploadReceipt(c: Context) {
+    try {
+      const formData =
+        await c.req.formData()
 
-            const formData =
-                await c.req.formData()
+      const file =
+        formData.get('receipt')
 
-            console.log('FormData recibido')
+      if (!file || typeof file === 'string') {
+        return c.json(
+          {
+            message:
+              'Se requiere un archivo del recibo',
+          },
+          400
+        )
+      }
 
-            const file =
-                formData.get('receipt')
+      if (
+        !ALLOWED_MIME_TYPES.includes(
+          file.type
+        )
+      ) {
+        return c.json(
+          {
+            message:
+              'Solo se permiten archivos JPEG, PNG y WebP',
+          },
+          400
+        )
+      }
 
-            console.log('Archivo:', file)
+      if (file.size > MAX_FILE_SIZE) {
+        return c.json(
+          {
+            message:
+              'El tamaño máximo del archivo debe ser de 5MB',
+          },
+          400
+        )
+      }
 
-            if (!(file instanceof File)) {
-                return c.json(
-                    {
-                        message:
-                            'Se requiere un archivo del recibo',
-                    },
-                    400
-                )
-            }
+      const extension =
+        file.name.split('.').pop()
 
-            console.log('Tipo:', file.type)
-            console.log('Tamaño:', file.size)
+      const filename =
+        `${crypto.randomUUID()}.${extension}`
 
-            if (
-                !ALLOWED_MIME_TYPES.includes(
-                    file.type
-                )
-            ) {
-                return c.json(
-                    {
-                        message:
-                            'Solo se permiten archivos JPEG, PNG y WebP',
-                    },
-                    400
-                )
-            }
+      const uploadsDir = path.join(
+        process.cwd(),
+        'uploads'
+      )
 
-            if (file.size > MAX_FILE_SIZE) {
-                return c.json(
-                    {
-                        message:
-                            'El tamaño máximo del archivo debe ser de 5MB',
-                    },
-                    400
-                )
-            }
+      await fs.mkdir(
+        uploadsDir,
+        { recursive: true }
+      )
 
-            const extension =
-                file.name.split('.').pop()
+      const uploadPath = path.join(
+        uploadsDir,
+        filename
+      )
 
-            const filename =
-                `${crypto.randomUUID()}.${extension}`
+      const buffer =
+        Buffer.from(
+          await file.arrayBuffer()
+        )
 
-            const uploadPath = path.join(
-                process.cwd(),
-                'uploads',
-                filename
-            )
+      await fs.writeFile(
+        uploadPath,
+        buffer
+      )
 
-            console.log('Ruta:', uploadPath)
+      return c.json({
+        receiptUrl:
+          `/uploads/${filename}`,
+      })
+    } catch (error) {
+      console.error(error)
 
-            const buffer =
-                Buffer.from(
-                    await file.arrayBuffer()
-                )
-
-            await fs.mkdir(
-                path.join(process.cwd(), 'uploads'),
-                { recursive: true }
-            )
-
-            await fs.writeFile(
-                uploadPath,
-                buffer
-            )
-
-            console.log('Archivo guardado')
-
-            return c.json({
-                receiptUrl:
-                    `/uploads/${filename}`,
-            })
-        } catch (error) {
-            console.error(error)
-
-            return c.json(
-                {
-                    message:
-                        'Error interno del servidor',
-                },
-                500
-            )
-        }
-    },
+      return c.json(
+        {
+          message:
+            'Error interno del servidor',
+        },
+        500
+      )
+    }
+  },
 }
