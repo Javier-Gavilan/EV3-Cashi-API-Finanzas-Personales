@@ -1,7 +1,6 @@
 # Cashi API REST
 
 Vídeo Demostrativo:
-> OBS me dejó de funcionar y me lanza varios errores, así que no he podido grabar la explicación del código y no tengo otro programa de confianza para realizar la grabación. Solo se me ha ocurrido dejar la explicación general y las pruebas a realizar en Bruno en el README. Lamento las molestias.
 
 API REST hecha y trabajada con:
 
@@ -14,34 +13,24 @@ API REST hecha y trabajada con:
 - Zod
 - JWT
 - bcrypt.js
+- Render
 
 Características:
 
 - API REST funcional con métodos HTTP
-- Migraciones mediante Prisma y conexión a base de datos con PostgreSQL y Docker
+- Migraciones mediante Prisma y conexión a base de datos con PostgreSQL con despliegue en Render
 - Autenticación mediante JWT
 - Registro e inicio de sesión de usuarios
 - Contraseñas almacenadas mediante hash con bcrypt
 - CRUD completo de categorías y trnasacciones, autenticadas y asociadas a usuarios.
 - Subida de comprobantes
 
-Explicación General:
+API desplegada:
 
-Se implementó la tabla de Usuarios en *schema.prisma* y se actualizó la de Transacciones para implementar los nuevos cambios, aplicando un migrate reset para reiniciar la base de datos y que no hayan problemas en las tablas. Esto para posteriormente aplicar que las transacciones pertenezcan a usuarios en específico y sean exclusivas de estos. Con esto también se implementaron campos opcionales para almacenar la URL de un comprobante que se almacenará en *uploads/* así como las coordenadas geográficas asociadas a cada transacción.
+> La API se encuentra actualmente desplegada en: https://cashi-api-un4v.onrender.com/
+> Los endpoints pueden probarse con Bruno.
 
-La autenticación se implementó mediante dos endpoints:
-> POST /auth/register
-> POST /auth/login
-Durante el registro, la contraseña no se almacenará en texto plano, sino que antes de guardarse en la base de datos será hasheada mediante el *bcrypt*. Cuando un usuario sea logeado correctamente, la API generará un *JWT (JSON Web Token)* que identicará a dicho usuario. El middleware interceptará todas las solicitudes protegidas y verificará que existe un token válido en el encabezado. Si el token es válido, la información quedará disponible para el usuario. En caso contrario, la solicitud será rechazada.
-
-Una vez autenticado, el usuario solo podrá acceder a sus propias transacciones mediante su token personal, impidiendo el acceso a información de otros usuarios. Con esto, el balance de las transacciones únicamente contemplará las pertenecientes a dicho usuario.
-
-Por último, mediante el método:
-> POST /transactions/upload
-usando el formato Multipart Form, y con las validaciones básicas de formato y tamaño en schema, se generará un nombre único del archivo y se almacenará en *uploads*.
-
-
-Instrucciones:
+Instrucciones (Ejecución local):
 
 - Dirigirse al directorio *cd (Directorio)*
 - Instalar las dependencias con *npm install*
@@ -53,4 +42,4 @@ Instrucciones:
 
 Uso de IA:
 
-> Mediante *ChatGPT* le solicité la creación asistida del JWT, middleware, y la modificación del schema.prisma para agregar la tabla usuario y modificar la de transacciones, así como el solucionar errores generales en el código por no haber ordenado correctamente ciertas líneas o componentes.
+> Mediante *ChatGPT* le solicité la modificación de package.json y tsconfig.json para adaptar el proyecto a su despliegue en Render, así como el cambio de uso de *uuid* a *crypto*¨en el archivo *upload.controller.ts* debido a cambios de commonjs para evitar problemas con el proyecto. También le pedí ayuda para corregir problemas de servidor que me encontré al momento de subir los recibos al no haber actualizado correctamente el repositorio.
