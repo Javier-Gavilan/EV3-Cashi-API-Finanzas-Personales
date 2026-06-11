@@ -81,6 +81,11 @@ export const uploadController = {
                     await file.arrayBuffer()
                 )
 
+            await fs.mkdir(
+                path.join(process.cwd(), 'uploads'),
+                { recursive: true }
+            )
+
             await fs.writeFile(
                 uploadPath,
                 buffer
